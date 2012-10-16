@@ -19,15 +19,15 @@
 				<ColumnDefinition Width="0.80*"/>
 				<ColumnDefinition Width="0.20*"/>
 			</Grid.ColumnDefinitions>
-			<Rectangle Grid.Column="1" Fill="#FF681D70" Stroke="Black"/>
-			<Rectangle Grid.Column="1" Fill="Black" Grid.Row="1" Stroke="Black" MouseLeftButtonDown="Rectangle_MouseLeftButtonDown" />
-			<Rectangle Grid.Column="2" Fill="#FF681D70" Grid.Row="1" Stroke="Black" />
+			<Rectangle Grid.Column="1" Fill="#FF681D70" Stroke="Black" MouseLeftButtonDown="TopWallClick" />
+			<Rectangle Grid.Column="1" Fill="Black" Grid.Row="1" Stroke="Black"  />
+			<Rectangle Grid.Column="2" Fill="#FF681D70" Grid.Row="1" Stroke="Black" MouseLeftButtonDown="RightWallClick" />
 			<Rectangle Grid.Column="2" Fill="#FF681D70" Stroke="Black"/>
 			<Rectangle Fill="#FF681D70" Stroke="Black"/>
 			<Rectangle Fill="#FF681D70" Grid.Row="2" Stroke="Black"/>
-			<Rectangle Grid.Column="1" Fill="#FF681D70" Grid.Row="2" Stroke="Black"/>
+			<Rectangle Grid.Column="1" Fill="#FF681D70" Grid.Row="2" Stroke="Black" MouseLeftButtonDown="BottomWallClick" />
 			<Rectangle Grid.Column="2" Fill="#FF681D70" Grid.Row="2" Stroke="Black"/>
-			<Rectangle Fill="#FF681D70" Grid.Row="1" Stroke="Black"/>
+			<Rectangle Fill="#FF681D70" Grid.Row="1" Stroke="Black" MouseLeftButtonDown="LeftWallClick" />
     </Grid>
 		
 	

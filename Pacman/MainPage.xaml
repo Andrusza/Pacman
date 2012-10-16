@@ -5,7 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Pacman="clr-namespace:Pacman" x:Name="Window"
 	mc:Ignorable="d"
 	x:Class="PacMan.MainPage"
-	Width="1024" Height="800">
+	Width="1024" Height="800" KeyDown="Window_KeyDown">
    
    
     <Grid x:Name="LayoutRoot" Background="Black">
@@ -13,6 +13,7 @@
             <ColumnDefinition Width="0.900*"/>
             <ColumnDefinition Width="0.100*"/>
         </Grid.ColumnDefinitions>
+
         <StackPanel x:Name="Menu" Grid.Column="1">
             <Button Content="Start" Background="#FF531F53" Margin="5,10,5,0" Height="50" Click="Button_Click" />
             <Button Content="Load" Margin="5,10,5,0" Height="50"/>
@@ -27,8 +28,16 @@
                 </Button.BorderBrush>
             </Button>
         </StackPanel>
+       
         <control:WrapPanel Name="Level"/>
-        <Canvas x:Name="PlayerLevel"/>
+        <Canvas>
+        	<Image Name="player" Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top" Source="Untitled-5.jpg">
+                <Image.RenderTransform>
+                    <TranslateTransform x:Name="_translateTransform1" X="0" Y="0" />
+                </Image.RenderTransform>
+            </Image>
+        </Canvas>
+        
 
 
 

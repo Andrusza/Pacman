@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System;
 
 namespace Pacman
 {
@@ -25,6 +24,7 @@ namespace Pacman
             this.BOTTOMWALL = bottom;
             SetWalls();
         }
+
         private void SetWalls()
         {
             LeftWall();
@@ -37,10 +37,12 @@ namespace Pacman
         {
             if (LEFTWALL == false)
             {
+                LEFTWALL = true;
                 LayoutRoot.ColumnDefinitions[0].Width = new GridLength(0.0, GridUnitType.Star);
             }
             else
             {
+                LEFTWALL = false;
                 LayoutRoot.ColumnDefinitions[0].Width = new GridLength(0.2, GridUnitType.Star);
             }
         }
@@ -49,10 +51,12 @@ namespace Pacman
         {
             if (RIGHTWALL == false)
             {
+                RIGHTWALL = true;
                 LayoutRoot.ColumnDefinitions[2].Width = new GridLength(0.0, GridUnitType.Star);
             }
             else
             {
+                RIGHTWALL = false;
                 LayoutRoot.ColumnDefinitions[2].Width = new GridLength(0.2, GridUnitType.Star);
             }
         }
@@ -61,10 +65,12 @@ namespace Pacman
         {
             if (TOPWALL == false)
             {
+                TOPWALL=true;
                 LayoutRoot.RowDefinitions[0].Height = new GridLength(0.0, GridUnitType.Star);
             }
             else
             {
+                TOPWALL = false;
                 LayoutRoot.RowDefinitions[0].Height = new GridLength(0.2, GridUnitType.Star);
             }
         }
@@ -73,17 +79,34 @@ namespace Pacman
         {
             if (BOTTOMWALL == false)
             {
+                BOTTOMWALL = true;
                 LayoutRoot.RowDefinitions[2].Height = new GridLength(0.0, GridUnitType.Star);
             }
             else
             {
+                BOTTOMWALL = false;
                 LayoutRoot.RowDefinitions[2].Height = new GridLength(0.2, GridUnitType.Star);
             }
         }
 
-        private void Rectangle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void TopWallClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            int x = 0;
+            TopWall();
+        }
+
+        private void BottomWallClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            BottomWall();
+        }
+
+        private void LeftWallClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            LeftWall();
+        }
+
+        private void RightWallClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            RightWall();
         }
     }
 }

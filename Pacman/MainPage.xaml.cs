@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Pacman;
 using Pacman.Game;
+using System.Windows.Input;
 
 namespace PacMan
 {
@@ -33,15 +34,15 @@ namespace PacMan
 
             Level.Children.Clear();
 
-            double _width = (width * 0.800) / 10.00;
-            double _height = height / 10.00;
+            double _width = (width * 0.800) / 20.00;
+            double _height = height / 20.00;
 
             double centerX = _width / 2;
             double centerY = _height / 2;
 
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= 22; i++)
             {
-                for (int j = 1; j <= 11; j++)
+                for (int j = 1; j <= 19; j++)
                 {
                     Pacman.Block b = new Pacman.Block(false, true, true, true);
                     b.Width = _width;
@@ -60,12 +61,34 @@ namespace PacMan
 
         private void RenderFrame(object sender, RenderFrameEventArgs e)
         {
-            int x = 1;
+           
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int x = 0;
+            
+        }
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Up:
+                    _translateTransform1.Y -= 10;
+                    break;
+                case Key.Down:
+                    _translateTransform1.Y += 10;
+                    break;
+                case Key.Left:
+                    _translateTransform1.X -= 10;
+                    break;
+                case Key.Right:
+                    _translateTransform1.X += 10;
+                    break;
+                default:
+                   
+                    break;
+            } 
         }
     }
 }
