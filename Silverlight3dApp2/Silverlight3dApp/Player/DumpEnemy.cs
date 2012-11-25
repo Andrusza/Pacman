@@ -6,16 +6,19 @@ namespace Silverlight3dApp.Ghosts
 {
     public class DumpEnemy : GhostBase
     {
-        private System.Random rand = new System.Random();
+        private static System.Random rand = new System.Random();
 
         public DumpEnemy(Tile curentTile, ContentManager content)
             : base(curentTile, content)
         {
-            texture = content.Load<Texture2D>("pac");
             font = content.Load<SpriteFont>("font");
+            htexture = content.Load<Texture2D>("pac3");
+            vtexture = content.Load<Texture2D>("pac4");
+            directionTexture = htexture;
+            Maze.PositionInMaze(this);
         }
 
-        public void Update()
+        public void RandomDir()
         {
             if (this.direction.X == 0)
             {
@@ -25,17 +28,14 @@ namespace Silverlight3dApp.Ghosts
             {
                 this.direction.Y = rand.Next(-1, 2);
             }
-
             UpdateColisionTiles();
+        }
 
-            if (movingMode)
-            {
-                Move(ref horizontal, ref vertical, ref bounds.X, ref bounds.Y, ref direction.X, ref direction.Y, ref position.X, ref position.Y);
-            }
-            else
-            {
-                Move(ref vertical, ref horizontal, ref bounds.Y, ref bounds.X, ref direction.Y, ref direction.X, ref position.Y, ref position.X);
-            }
+        public override void Update()
+        {
+            RandomDir();
+
+            base.Update();
         }
     }
 }

@@ -6,27 +6,33 @@ using System.Windows.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Silverlight3dApp.Pacman;
 using Silverlight3dApp.Base;
 
 namespace Silverlight3dApp
 {
     public class Maze
     {
-        public Tile[,] grid;
+        private static Tile[,] grid;
 
-        public Tile GetTile(int x, int y)
+        public static Tile[,] Grid
         {
-            return grid[x, y];
+            get { return Maze.grid; }
+            set { Maze.grid = value; }
+        }
+
+        public  Tile GetTile(int x, int y)
+        {
+            return Grid[x, y];
         }
 
         private readonly ContentManager content;
+
         private Texture2D wall;
         private Texture2D space;
         private Texture2D coin;
 
-        private int numX;
-        private int numY;
+        private int numX; //Number of tiles horizontaly
+        private int numY; //Number of tiles verticaly
 
         public Maze()
         {
@@ -39,9 +45,9 @@ namespace Silverlight3dApp
             LoadFromFile("Levels/0.txt");
         }
 
-        public void PositionInMaze(GhostBase p)
+        public static void PositionInMaze(GhostBase p)
         {
-            p.CheckWay(grid);
+            p.CheckWay(Grid);
         }
 
         private void LoadFromFile(string path)
@@ -63,13 +69,13 @@ namespace Silverlight3dApp
             }
 
             // Allocate the tile grid.
-            grid = new Tile[width, lines.Count];
+            Grid = new Tile[width, lines.Count];
 
             numX = width;
             numY = lines.Count;
 
-            Tile.Width /= numX;
-            Tile.Height /= numY;
+            Tile.Width /= numX; //Set width of tile based,based on size of the canvas divaded by number of tiles.
+            Tile.Height /= numY; 
             Tile.Size = new Vector2(Tile.Width, Tile.Height);
 
             // Loop over every tile position,
@@ -79,23 +85,25 @@ namespace Silverlight3dApp
                 {
                     // to load each tile.
                     char type = lines[y][x];
-                    grid[x, y] = Load(type, x, y);
+                    Grid[x, y] = Load(type, x, y);
                 }
             }
         }
+       
 
         private Tile Load(char type, int x, int y)
         {
             Vector2 gridPosition = new Vector2(x, y);
             Vector2 position = gridPosition * Tile.Size;
             Rectangle bounds = new Rectangle((int)position.X, (int)position.Y, (int)Tile.Size.X, (int)Tile.Size.Y);
-
+            
+            
             if (type == '0')
             {
                 TileCollision tileType = TileCollision.Passable;
                 Tile tile = new Tile(space, tileType, bounds, gridPosition);
                 tile.coin = new Coin(coin, tile.position * Tile.Size, Tile.Size);
-               
+              
                 return tile;
             }
             else
@@ -111,12 +119,12 @@ namespace Silverlight3dApp
             {
                 for (int j = 0; j < numX; j++)
                 {
-                    Tile currentTile = grid[j, i];
+                    Tile currentTile = Grid[j, i];
 
                     spriteBatch.Draw(currentTile.texture, currentTile.bounds, Color.White);
                     if (currentTile.coin != null)
                     {
-                        grid[j, i].coin.Draw(drawEventArgs, spriteBatch);
+                        Grid[j, i].coin.Draw(drawEventArgs, spriteBatch);
                     }
                 }
             }

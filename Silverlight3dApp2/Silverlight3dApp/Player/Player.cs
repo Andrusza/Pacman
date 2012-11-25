@@ -9,11 +9,31 @@ namespace Silverlight3dApp.Pacman
 {
     public class Player : GhostBase
     {
-        public Player(Tile curentTile, ContentManager content)
+        private static Player instance;
+        private int coinsToCollect=288;
+
+        public static Player GetInstance
+        {
+            get { return Player.instance; }
+        }
+
+        public static void CreatInstance(Tile curentTile, ContentManager content)
+        {
+            instance = new Player(curentTile, content);
+        }
+
+        private Player(Tile curentTile, ContentManager content)
             : base(curentTile, content)
         {
-            texture = content.Load<Texture2D>("pac");
+            htexture = content.Load<Texture2D>("pac");
+            vtexture = content.Load<Texture2D>("pac2");
+
+            directionTexture = htexture;
             font = content.Load<SpriteFont>("font");
+            Maze.PositionInMaze(this);
+
+            direction = new Vector2(1, -1);
+            UpdateColisionTiles();
         }
 
         public void HandleInput(KeyboardState keyboardState)
@@ -55,24 +75,22 @@ namespace Silverlight3dApp.Pacman
             }
         }
 
+        private int score = 0;
+
         public void Update(KeyboardState keyboardState)
         {
             HandleInput(keyboardState);
-            if (currentTile.coin != null)
+            if (CurrentTile.coin != null)
             {
-                currentTile.coin = null;
+                score += CurrentTile.coin.pointValue;
+                --coinsToCollect;
+                CurrentTile.coin = null;
             }
-
-            if (movingMode)
+            if (coinsToCollect == 0)
             {
-                Move(ref horizontal, ref vertical, ref bounds.X, ref bounds.Y, ref direction.X, ref direction.Y, ref position.X, ref position.Y);
+                int lolx=0;
             }
-            else
-            {
-                Move(ref vertical, ref horizontal, ref bounds.Y, ref bounds.X, ref direction.Y, ref direction.X, ref position.Y, ref position.X);
-            }
+            base.Update();
         }
-
-        
     }
 }

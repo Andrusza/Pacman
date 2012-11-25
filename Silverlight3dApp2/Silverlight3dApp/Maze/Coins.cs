@@ -9,7 +9,7 @@ namespace Silverlight3dApp
         private Texture2D texture;
         private Rectangle bounds;
 
-        public const int pointValue = 30;
+        public int pointValue = 30;
 
         public Coin(Texture2D texture, Vector2 position, Vector2 size)
         {

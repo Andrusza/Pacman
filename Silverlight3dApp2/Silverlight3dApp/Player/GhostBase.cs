@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Silverlight3dApp.Pacman;
 
 namespace Silverlight3dApp.Base
 {
@@ -15,11 +16,21 @@ namespace Silverlight3dApp.Base
     public abstract class GhostBase
     {
         protected Rectangle bounds;
-        protected Texture2D texture;
+        protected Texture2D htexture;
+        protected Texture2D vtexture;
+        protected Texture2D directionTexture;
+        protected SpriteEffects orientation = SpriteEffects.None;
+        
         protected Vector2 direction;
         public Vector2 position;
-        protected Tile currentTile;
-        public Maze maze;
+        private Tile currentTile;
+
+        public Tile CurrentTile
+        {
+            get { return currentTile; }
+            set { currentTile = value; }
+        }
+
         public bool movingMode;
 
         protected Tile horizontal;
@@ -34,18 +45,18 @@ namespace Silverlight3dApp.Base
             this.bounds = curentTile.bounds;
             this.currentTile = curentTile;
             this.position = currentTile.position;
-
+            
             this.neighborhood = new Neighborhood();
             movingMode = true;
             direction = new Vector2(0, 0);
         }
 
-        public void CheckWay(Tile[,] grid)
+        public virtual void CheckWay(Tile[,] grid)
         {
             int x = (int)this.position.X;
             int y = (int)this.position.Y;
-            this.currentTile = grid[x, y];
-            this.bounds = currentTile.bounds;
+            this.CurrentTile = grid[x, y];
+            this.bounds = CurrentTile.bounds;
 
             neighborhood.Left = grid[x - 1, y];
             neighborhood.Right = grid[x + 1, y];
@@ -75,7 +86,7 @@ namespace Silverlight3dApp.Base
             }
         }
 
-        protected void Move(ref Tile from, ref Tile to, ref int fromAxis, ref int toAxis, ref float fromAmount, ref float toAmout, ref float fromPosition, ref float toPosition)
+        protected bool Move(ref Tile from, ref Tile to, ref int fromAxis, ref int toAxis, ref float fromAmount, ref float toAmout, ref float fromPosition, ref float toPosition)
         {
             if (from != null)
             {
@@ -84,10 +95,10 @@ namespace Silverlight3dApp.Base
                 {
                     if (from.tileType == TileCollision.Passable)
                     {
-                        if (!CheckPlayerMazeCollision(currentTile))
+                        if (!CheckPlayerMazeCollision(CurrentTile))
                         {
                             fromPosition += fromAmount;
-                            maze.PositionInMaze(this);
+                            Maze.PositionInMaze(this);
                             UpdateColisionTiles();
                             if (to != null)
                             {
@@ -107,19 +118,27 @@ namespace Silverlight3dApp.Base
                                 }
                             }
                         }
+                        return true;
+                        
                     }
                     else
                     {
                         movingMode = !movingMode;
                         fromAxis -= (int)fromAmount * 2;
-                        fromAmount = 0;
+                        if (this.GetType()!=typeof(Player))
+                        {
+                            fromAmount = 0;
+                        }
+                        return false;
                     }
                 }
+               
             }
             else
             {
                 movingMode = !movingMode;
             }
+            return true;
         }
 
         protected void UpdateColisionTiles()
@@ -165,12 +184,46 @@ namespace Silverlight3dApp.Base
             }
         }
 
+        public virtual void Update() 
+        {
+            if (movingMode)
+            {
+                bool turn = Move(ref horizontal, ref vertical, ref bounds.X, ref bounds.Y, ref direction.X, ref direction.Y, ref position.X, ref position.Y);
+                if (turn)
+                {
+                    directionTexture = htexture;
+                    if (direction.X == 1)
+                    {
+                        orientation = SpriteEffects.None;
+                    }
+                    else
+                    {
+                        orientation = SpriteEffects.FlipHorizontally;
+                    }
+                }
+            }
+            else
+            {
+                bool turn = Move(ref vertical, ref horizontal, ref bounds.Y, ref bounds.X, ref direction.Y, ref direction.X, ref position.Y, ref position.X);
+                if (turn)
+                {
+                    directionTexture = vtexture;
+                    if (direction.Y == -1)
+                    {
+                        orientation = SpriteEffects.None;
+                    }
+                    else
+                    {
+                        orientation = SpriteEffects.FlipVertically;
+                    }
+                }
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(this.texture, this.bounds, Color.White);
-            spriteBatch.DrawString(font, this.direction.X + " " + this.direction.Y, new Vector2(100, 170), Color.Black);
+            spriteBatch.Draw(this.directionTexture, this.bounds, null, Color.White, 0, Vector2.Zero, orientation, 1f);
+            //spriteBatch.DrawString(font, this.direction.X + " " + this.direction.Y, new Vector2(100, 170), Color.Black);
         }
     }
-
-    
 }

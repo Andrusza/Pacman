@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Silverlight3dApp
 {
@@ -35,7 +36,13 @@ namespace Silverlight3dApp
             Tile.Width = (int)myDrawingSurface.Width;
             Tile.Height = (int)myDrawingSurface.Height;
 
+            
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
             game = new Game();
+            myDrawingSurface.Draw += new EventHandler<DrawEventArgs>(myDrawingSurface_Draw);
         }
     }
 }
