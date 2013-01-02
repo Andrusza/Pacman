@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Silverlight3dApp.Pacman;
 
 namespace Silverlight3dApp.Base
 {
@@ -20,7 +19,7 @@ namespace Silverlight3dApp.Base
         protected Texture2D vtexture;
         protected Texture2D directionTexture;
         protected SpriteEffects orientation = SpriteEffects.None;
-        
+
         protected Vector2 direction;
         public Vector2 position;
         private Tile currentTile;
@@ -45,7 +44,7 @@ namespace Silverlight3dApp.Base
             this.bounds = curentTile.bounds;
             this.currentTile = curentTile;
             this.position = currentTile.position;
-            
+
             this.neighborhood = new Neighborhood();
             movingMode = true;
             direction = new Vector2(0, 0);
@@ -65,6 +64,28 @@ namespace Silverlight3dApp.Base
         }
 
         public bool CheckPlayerMazeCollision(Tile toCheck)
+        {
+            int a_x1 = bounds.Left;
+            int a_x2 = bounds.Right;
+            int a_y1 = bounds.Top;
+            int a_y2 = bounds.Bottom;
+
+            int b_x1 = toCheck.bounds.Left;
+            int b_x2 = toCheck.bounds.Right;
+            int b_y1 = toCheck.bounds.Top;
+            int b_y2 = toCheck.bounds.Bottom;
+
+            if (a_x1 < b_x2 && a_x2 > b_x1 && a_y1 < b_y2 && a_y2 > b_y1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool CheckGhostsCollision(GhostBase toCheck)
         {
             int a_x1 = bounds.Left;
             int a_x2 = bounds.Right;
@@ -119,20 +140,17 @@ namespace Silverlight3dApp.Base
                             }
                         }
                         return true;
-                        
                     }
                     else
                     {
                         movingMode = !movingMode;
                         fromAxis -= (int)fromAmount * 2;
-                        if (this.GetType()!=typeof(Player))
-                        {
-                            fromAmount = 0;
-                        }
+
+                        fromAmount = 0;
+
                         return false;
                     }
                 }
-               
             }
             else
             {
@@ -184,7 +202,7 @@ namespace Silverlight3dApp.Base
             }
         }
 
-        public virtual void Update() 
+        public virtual void Update()
         {
             if (movingMode)
             {
@@ -223,7 +241,7 @@ namespace Silverlight3dApp.Base
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(this.directionTexture, this.bounds, null, Color.White, 0, Vector2.Zero, orientation, 1f);
-            //spriteBatch.DrawString(font, this.direction.X + " " + this.direction.Y, new Vector2(100, 170), Color.Black);
+            spriteBatch.DrawString(font, this.direction.X + " " + this.direction.Y, new Vector2(100, 70), Color.Black);
         }
     }
 }

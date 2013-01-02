@@ -9,7 +9,6 @@ namespace Silverlight3dApp
         Impassable = 1,
     }
 
-
     //Param. for A* alghoritm
     public class AstarParam
     {
@@ -31,7 +30,9 @@ namespace Silverlight3dApp
         public Coin coin;
 
         public static int Width { get; set; }
+
         public static int Height { get; set; }
+
         public static Vector2 Size { get; set; }
 
         public Tile(Texture2D texture, TileCollision collision, Rectangle bounds, Vector2 position)

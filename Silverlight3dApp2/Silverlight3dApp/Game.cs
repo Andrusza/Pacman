@@ -1,75 +1,194 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Graphics;
+using System.Windows.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Base;
-using Silverlight3dApp.Ghosts;
 using Silverlight3dApp.Pacman;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 
 namespace Silverlight3dApp
 {
-    public class Game
+    public abstract class State
     {
-        private readonly SpriteBatch spriteBatch;
-        private readonly ContentManager contentManager;
-        private Maze maze;
+        public Game game;
 
-        private List<GhostBase> listOfEnemies;
+        public abstract void Update(DrawEventArgs drawEventArgs);
 
-        public Game()
+        public virtual void Draw(DrawEventArgs drawEventArgs)
         {
-            contentManager = new ContentManager(null, "Content");
-            spriteBatch = new SpriteBatch(GraphicsDeviceManager.Current.GraphicsDevice);
-            listOfEnemies = new List<GhostBase>();
+            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
+            this.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            maze = new Maze();
-            Player.CreatInstance(maze.GetTile(19, 1), contentManager);
+            this.game.maze.Draw(drawEventArgs, this.game.spriteBatch);
+            Player.GetInstance.Draw(this.game.spriteBatch);
 
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(1, 1), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(15, 1), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(26, 1), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(5, 1), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(12, 1), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(20, 27), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(8, 8), contentManager));
-            listOfEnemies.Add(new DumpEnemy(maze.GetTile(10, 15), contentManager));
+            foreach (GhostBase x in this.game.difficulty.listOfEnemies)
+            {
+                x.Draw(this.game.spriteBatch);
+            }
 
-            listOfEnemies.Add(new SmartEnemy(maze.GetTile(15, 1), contentManager));
-            listOfEnemies.Add(new SmartEnemy(maze.GetTile(5, 26), contentManager));
+            this.game.spriteBatch.End();
+        }
+    }
+
+    public class StartState : State
+    {
+        private SpriteFont font;
+        private Vector2 position;
+        private int time = 5;
+        private DispatcherTimer timer;
+
+        public override void Update(DrawEventArgs drawEventArgs)
+        {
         }
 
-        public void Update(DrawEventArgs drawEventArgs)
+        public override void Draw(DrawEventArgs drawEventArgs)
+        {
+            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
+            this.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+            this.game.maze.Draw(drawEventArgs, this.game.spriteBatch);
+            Player.GetInstance.Draw(this.game.spriteBatch);
+
+            foreach (GhostBase x in this.game.difficulty.listOfEnemies)
+            {
+                x.Draw(this.game.spriteBatch);
+            }
+            this.game.spriteBatch.DrawString(font, time.ToString(), position, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            this.game.spriteBatch.End();
+        }
+
+        public StartState(Game game)
+        {
+            this.game = game;
+            font = this.game.contentManager.Load<SpriteFont>("font");
+            position = game.maze.GetSize();
+            position = position / 2;
+            position *= Tile.Size;
+            Player.GetInstance.PlayerBorns(game.contentManager);
+
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    timer = new DispatcherTimer();
+                    timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
+                    timer.Tick += new EventHandler(CountDown);
+                    timer.Start();
+                });
+            });
+        }
+
+        private void CountDown(object o, EventArgs sender)
+        {
+            if (time == 0)
+            {
+                this.game.state = new PlayState(this.game);
+                timer.Stop();
+            }
+            else
+            {
+                time--;
+            }
+        }
+    }
+
+    public class WinState : State
+    {
+        public override void Update(DrawEventArgs drawEventArgs)
+        {
+            int lol = 1;
+        }
+
+        public WinState(Game game)
+        {
+            this.game = game;
+        }
+    }
+
+    
+
+    public class PlayState : State
+    {
+        public override void Update(DrawEventArgs drawEventArgs)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             Player.GetInstance.Update(keyboardState);
-            foreach (GhostBase x in listOfEnemies)
+            foreach (GhostBase x in game.difficulty.listOfEnemies)
             {
                 x.Update();
-                if (Player.GetInstance.CheckPlayerMazeCollision(x.CurrentTile))
+                if (Player.GetInstance.CheckGhostsCollision(x))
                 {
-                    int lol = 1;
+                    this.game.state = new LoseState(this.game);
                 }
             }
+            if (Maze.NumCoins == 0) this.game.state = new WinState(this.game);
         }
 
-        public void Draw(DrawEventArgs drawEventArgs)
+        public PlayState(Game game)
         {
-            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            this.game = game;
+        }
+    }
 
-            maze.Draw(drawEventArgs, spriteBatch);
-            Player.GetInstance.Draw(spriteBatch);
+    public class LoseState : State
+    {
+        private DispatcherTimer timer;
 
-            foreach (GhostBase x in listOfEnemies)
+        public override void Update(DrawEventArgs drawEventArgs)
+        {
+        }
+
+        public LoseState(Game game)
+        {
+            this.game = game;
+            Player.GetInstance.PlayerDies(this.game.contentManager);
+            Player.GetInstance.Update();
+
+            this.game.difficulty=this.game.maze.RandomPositionOfEnemies();
+
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                x.Draw(spriteBatch);
-            }
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    timer = new DispatcherTimer();
+                    timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
+                    timer.Tick += new EventHandler(CountDown);
+                    timer.Start();
+                });
+            });
 
-            spriteBatch.End();
+        }
+
+        private void CountDown(object o, EventArgs sender)
+        {
+            this.game.state = new StartState(this.game);
+            timer.Stop();
+        }
+    }
+
+    public class Game
+    {
+        public readonly SpriteBatch spriteBatch;
+        public readonly ContentManager contentManager;
+        public Maze maze;
+        public LevelDifficulty difficulty;
+        public State state;
+
+        public Game(LevelDifficulty difficulty)
+        {
+            contentManager = new ContentManager(null, "Content");
+            spriteBatch = new SpriteBatch(GraphicsDeviceManager.Current.GraphicsDevice);
+            this.difficulty = difficulty;
+
+            maze = new Maze(difficulty);
+            state = new StartState(this);
         }
     }
 }

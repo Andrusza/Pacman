@@ -21,10 +21,6 @@ namespace Silverlight3dApp
             bounds = new Rectangle((int)position.X, (int)position.Y, width, height);
         }
 
-        public void OnCollected()
-        {
-        }
-
         public void Draw(DrawEventArgs drawEventArgs, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(this.texture, bounds, Color.White);

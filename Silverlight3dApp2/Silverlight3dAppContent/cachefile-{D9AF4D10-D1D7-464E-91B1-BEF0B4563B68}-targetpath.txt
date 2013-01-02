@@ -7,3 +7,5 @@ font.xnb
 pac2.xnb
 pac3.xnb
 pac4.xnb
+pac5.xnb
+pac6.xnb

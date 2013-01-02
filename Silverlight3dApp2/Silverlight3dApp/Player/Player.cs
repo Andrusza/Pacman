@@ -10,7 +10,13 @@ namespace Silverlight3dApp.Pacman
     public class Player : GhostBase
     {
         private static Player instance;
-        private int coinsToCollect=288;
+        private static int score = 0;
+
+        public static int Score
+        {
+            get { return Player.score; }
+            set { score = value; }
+        }
 
         public static Player GetInstance
         {
@@ -25,15 +31,25 @@ namespace Silverlight3dApp.Pacman
         private Player(Tile curentTile, ContentManager content)
             : base(curentTile, content)
         {
-            htexture = content.Load<Texture2D>("pac");
-            vtexture = content.Load<Texture2D>("pac2");
-
+            PlayerBorns(content);
             directionTexture = htexture;
             font = content.Load<SpriteFont>("font");
             Maze.PositionInMaze(this);
 
-            direction = new Vector2(1, -1);
+            direction = new Vector2(0, 0);
             UpdateColisionTiles();
+        }
+
+        public void PlayerBorns(ContentManager content)
+        {
+            htexture = content.Load<Texture2D>("pac");
+            vtexture = content.Load<Texture2D>("pac2");
+        }
+
+        public void PlayerDies(ContentManager content)
+        {
+            htexture = content.Load<Texture2D>("pac5");
+            vtexture = content.Load<Texture2D>("pac6");
         }
 
         public void HandleInput(KeyboardState keyboardState)
@@ -75,21 +91,16 @@ namespace Silverlight3dApp.Pacman
             }
         }
 
-        private int score = 0;
-
         public void Update(KeyboardState keyboardState)
         {
             HandleInput(keyboardState);
             if (CurrentTile.coin != null)
             {
                 score += CurrentTile.coin.pointValue;
-                --coinsToCollect;
+                --Maze.NumCoins;
                 CurrentTile.coin = null;
             }
-            if (coinsToCollect == 0)
-            {
-                int lolx=0;
-            }
+
             base.Update();
         }
     }

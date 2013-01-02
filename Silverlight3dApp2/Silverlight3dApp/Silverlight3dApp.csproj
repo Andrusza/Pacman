@@ -74,17 +74,21 @@
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Controls.Data.Input, Version=5.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Windows.Xna" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Maze\Coins.cs" />
+    <Compile Include="Maze\LevelDifficulty.cs" />
     <Compile Include="Pathfinding\Astar.cs" />
     <Compile Include="Player\SmartEnemy.cs" />
     <Compile Include="Player\DumpEnemy.cs" />
     <Compile Include="Player\GhostBase.cs" />
     <Compile Include="Player\Player.cs" />
+    <Compile Include="Utility\Position2D.cs" />
+    <Compile Include="Utility\Timer.cs" />
     <Compile Include="Xaml\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -107,8 +111,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="Properties\AppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +120,7 @@
     <None Include="Properties\InBrowserSettings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\pac.png" />
     <Content Include="Levels\0.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
