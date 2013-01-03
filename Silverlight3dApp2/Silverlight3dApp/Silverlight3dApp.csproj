@@ -88,7 +88,6 @@
     <Compile Include="Player\GhostBase.cs" />
     <Compile Include="Player\Player.cs" />
     <Compile Include="Utility\Position2D.cs" />
-    <Compile Include="Utility\Timer.cs" />
     <Compile Include="Xaml\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
