@@ -43,17 +43,17 @@ namespace Silverlight3dApp.Ghosts
             UpdateColisionTiles();
         }
 
-        public override void CheckWay(Tile[,] grid)
+        public override void CheckWay()
         {
             int x = (int)this.position.X;
             int y = (int)this.position.Y;
-            this.CurrentTile = grid[x, y];
+            this.CurrentTile = Maze.Grid[x, y];
             this.bounds = CurrentTile.bounds;
 
-            neighborhood.Left = grid[x - 1, y];
-            neighborhood.Right = grid[x + 1, y];
-            neighborhood.Up = grid[x, y - 1];
-            neighborhood.Bottom = grid[x, y + 1];
+            neighborhood.Left = Maze.Grid[x - 1, y];
+            neighborhood.Right = Maze.Grid[x + 1, y];
+            neighborhood.Up = Maze.Grid[x, y - 1];
+            neighborhood.Bottom = Maze.Grid[x, y + 1];
 
             if (pathfinding.path.Count != 0)
             {
@@ -67,7 +67,7 @@ namespace Silverlight3dApp.Ghosts
         {
             pathfinding = new Astar(Player.GetInstance.CurrentTile, this.CurrentTile);
             direction = pathfinding.path.Peek();
-            Maze.PositionInMaze(this);
+            this.CheckWay();
         }
 
         public override void Update()

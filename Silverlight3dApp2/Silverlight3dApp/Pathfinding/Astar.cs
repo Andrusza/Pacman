@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Silverlight3dApp.Utility;
 
 namespace Silverlight3dApp.Pathfinding
 {
@@ -8,7 +9,7 @@ namespace Silverlight3dApp.Pathfinding
     {
         public List<Tile> closed;
         public List<Tile> open;
-        public Queue<Vector2> path;
+        public Queue<Position2D> path;
         private Tile currentTile;
         private Tile start;
         private Tile stop;
@@ -17,7 +18,7 @@ namespace Silverlight3dApp.Pathfinding
         {
             open = new List<Tile>();
             closed = new List<Tile>();
-            path = new Queue<Vector2>();
+            path = new Queue<Position2D>();
 
             this.start = start;
             this.stop = stop;
@@ -78,7 +79,7 @@ namespace Silverlight3dApp.Pathfinding
             {
                 int x = (int)parent.position.X - (int)children.position.X;
                 int y = (int)parent.position.Y - (int)children.position.Y;
-                path.Enqueue(new Vector2(-x, -y));
+                path.Enqueue(new Position2D(-x, -y));
             }
         }
 

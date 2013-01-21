@@ -15,7 +15,7 @@ namespace Silverlight3dApp.Ghosts
             htexture = content.Load<Texture2D>("pac3");
             vtexture = content.Load<Texture2D>("pac4");
             directionTexture = htexture;
-            Maze.PositionInMaze(this);
+            this.CheckWay();
         }
 
         public void RandomDir()

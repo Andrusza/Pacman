@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Silverlight3dApp.Utility;
 
 namespace Silverlight3dApp.Base
 {
@@ -20,7 +21,7 @@ namespace Silverlight3dApp.Base
         protected Texture2D directionTexture;
         protected SpriteEffects orientation = SpriteEffects.None;
 
-        protected Vector2 direction;
+        protected Position2D direction;
         public Vector2 position;
         private Tile currentTile;
 
@@ -47,20 +48,20 @@ namespace Silverlight3dApp.Base
 
             this.neighborhood = new Neighborhood();
             movingMode = true;
-            direction = new Vector2(0, 0);
+            direction = new Position2D(0, 0);
         }
 
-        public virtual void CheckWay(Tile[,] grid)
+        public virtual void CheckWay()
         {
             int x = (int)this.position.X;
             int y = (int)this.position.Y;
-            this.CurrentTile = grid[x, y];
+            this.CurrentTile = Maze.Grid[x, y];
             this.bounds = CurrentTile.bounds;
 
-            neighborhood.Left = grid[x - 1, y];
-            neighborhood.Right = grid[x + 1, y];
-            neighborhood.Up = grid[x, y - 1];
-            neighborhood.Bottom = grid[x, y + 1];
+            neighborhood.Left = Maze.Grid[x - 1, y];
+            neighborhood.Right = Maze.Grid[x + 1, y];
+            neighborhood.Up = Maze.Grid[x, y - 1];
+            neighborhood.Bottom = Maze.Grid[x, y + 1];
         }
 
         public bool CheckPlayerMazeCollision(Tile toCheck)
@@ -107,7 +108,7 @@ namespace Silverlight3dApp.Base
             }
         }
 
-        protected bool Move(ref Tile from, ref Tile to, ref int fromAxis, ref int toAxis, ref float fromAmount, ref float toAmout, ref float fromPosition, ref float toPosition)
+        protected bool Move(ref Tile from, ref Tile to, ref int fromAxis, ref int toAxis, ref int fromAmount, ref int toAmout, ref float fromPosition, ref float toPosition)
         {
             if (from != null)
             {
@@ -119,7 +120,7 @@ namespace Silverlight3dApp.Base
                         if (!CheckPlayerMazeCollision(CurrentTile))
                         {
                             fromPosition += fromAmount;
-                            Maze.PositionInMaze(this);
+                            this.CheckWay();
                             UpdateColisionTiles();
                             if (to != null)
                             {
@@ -241,7 +242,6 @@ namespace Silverlight3dApp.Base
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(this.directionTexture, this.bounds, null, Color.White, 0, Vector2.Zero, orientation, 1f);
-            spriteBatch.DrawString(font, this.direction.X + " " + this.direction.Y, new Vector2(100, 70), Color.Black);
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Silverlight3dApp.Base;
 using Silverlight3dApp.Ghosts;
 using Silverlight3dApp.Pacman;
 
@@ -42,7 +41,15 @@ namespace Silverlight3dApp
         private int numY; //Number of tiles verticaly
         private static int numCoins = 0;
         private Random rand;
-        private LevelDifficulty enemies;
+        private static LevelDifficulty enemies;
+
+        public static LevelDifficulty Enemies
+        {
+            get { return Maze.enemies; }
+            set { Maze.enemies = value; }
+        }
+
+        private Difficulty gamedifficult;
 
         public static int NumCoins
         {
@@ -50,23 +57,17 @@ namespace Silverlight3dApp
             set { numCoins = value; }
         }
 
-        public Maze(LevelDifficulty enemies)
+        public Maze(Difficulty enemies)
         {
             content = new ContentManager(null, "Content");
 
             wall = content.Load<Texture2D>("wall");
             space = content.Load<Texture2D>("space");
             coin = content.Load<Texture2D>("s");
-            this.enemies = enemies;
-
+            gamedifficult = enemies;
             rand = new Random();
 
             LoadFromFile("Levels/0.txt");
-        }
-
-        public static void PositionInMaze(GhostBase p)
-        {
-            p.CheckWay(Grid);
         }
 
         private void LoadFromFile(string path)
@@ -88,7 +89,7 @@ namespace Silverlight3dApp
             }
 
             // Allocate the tile grid.
-            Grid = new Tile[width, lines.Count];
+            Grid = new Tile[width + 2, lines.Count + 2];
 
             numX = width;
             numY = lines.Count;
@@ -98,50 +99,43 @@ namespace Silverlight3dApp
             Tile.Size = new Vector2(Tile.Width, Tile.Height);
 
             // Loop over every tile position,
-            for (int y = 0; y < numY; ++y)
+            for (int y = 0; y <= numY + 1; ++y)
             {
-                for (int x = 0; x < numX; ++x)
+                for (int x = 0; x <= numX + 1; ++x)
                 {
-                    // to load each tile.
-                    char type = lines[y][x];
-                    Grid[x, y] = Load(type, x, y);
+                    try
+                    {
+                        char type = lines[y][x];
+                        Grid[x, y] = Load(type, x, y);
+                    }
+                    catch (Exception e)
+                    {
+                        Grid[x, y] = Load('1', x, y);
+                    }
                 }
             }
 
             Player.CreatInstance(this.GetTile(13, 11), content);
 
-            for (int y = 0; y < numY; ++y)
-            {
-                for (int x = 0; x < numX; ++x)
-                {
-                    char type = lines[y][x];
-                    if (type == '0')
-                    {
-                        bool check = AddEnemy(x, y, content);
-                        if (check == false) { x = numX; y = numY; }
-                    }
-                }
-            }
-            
-            enemies=RandomPositionOfEnemies();
+            Enemies = RandomPositionOfEnemies();
         }
 
         public LevelDifficulty RandomPositionOfEnemies()
         {
-            enemies = new LevelDifficulty(enemies.difficult);
+            Enemies = new LevelDifficulty(gamedifficult);
             for (int y = 0; y < numY; ++y)
             {
                 for (int x = 0; x < numX; ++x)
                 {
                     TileCollision type = grid[x, y].tileType;
-                    if (type==TileCollision.Passable)
+                    if (type == TileCollision.Passable)
                     {
                         bool check = AddEnemy(x, y, content);
                         if (check == false) { x = numX; y = numY; }
                     }
                 }
             }
-            return enemies;
+            return Enemies;
         }
 
         private int trashold = NumCoins;
@@ -151,19 +145,19 @@ namespace Silverlight3dApp
             int r = rand.Next(0, 100);
             if (r > trashold)
             {
-                if (enemies.numberOfDumpEnemies != 0)
+                if (Enemies.numberOfDumpEnemies != 0)
                 {
-                    enemies.listOfEnemies.Add(new DumpEnemy(this.GetTile(x, y), content));
-                    enemies.numberOfDumpEnemies--;
-                    trashold = 150;
+                    Enemies.listOfEnemies.Add(new DumpEnemy(this.GetTile(x, y), content));
+                    Enemies.numberOfDumpEnemies--;
+                    trashold = 120;
                     return true;
                 }
 
-                if (enemies.numberOfSmartEnemies != 0)
+                if (Enemies.numberOfSmartEnemies != 0)
                 {
-                    enemies.listOfEnemies.Add(new SmartEnemy(this.GetTile(x, y), content));
-                    enemies.numberOfSmartEnemies--;
-                    trashold = 150;
+                    Enemies.listOfEnemies.Add(new SmartEnemy(this.GetTile(x, y), content));
+                    Enemies.numberOfSmartEnemies--;
+                    trashold = 120;
                     return true;
                 }
                 return false;
@@ -196,9 +190,9 @@ namespace Silverlight3dApp
 
         public void Draw(DrawEventArgs drawEventArgs, SpriteBatch spriteBatch)
         {
-            for (int i = 0; i < numY; i++)
+            for (int i = 0; i <= numY + 1; i++)
             {
-                for (int j = 0; j < numX; j++)
+                for (int j = 0; j <= numX + 1; j++)
                 {
                     Tile currentTile = Grid[j, i];
 

@@ -15,19 +15,19 @@
             this.Y = y;
         }
 
-        public static Position2D operator +(Position2D a, Position2D b)
-        {
-            return new Position2D(a.X + b.X, a.Y + b.Y);
-        }
+        //public static Position2D operator +(Position2D a, Position2D b)
+        //{
+        //    return new Position2D(a.X + b.X, a.Y + b.Y);
+        //}
 
-        public static Position2D operator *(Position2D a, Position2D b)
-        {
-            return new Position2D(a.X * b.X, a.Y * b.Y);
-        }
+        //public static Position2D operator *(Position2D a, Position2D b)
+        //{
+        //    return new Position2D(a.X * b.X, a.Y * b.Y);
+        //}
 
-        public static Position2D operator /(Position2D a, int b)
-        {
-            return new Position2D(a.X / b, a.Y / b);
-        }
+        //public static Position2D operator /(Position2D a, int b)
+        //{
+        //    return new Position2D(a.X / b, a.Y / b);
+        //}
     }
 }

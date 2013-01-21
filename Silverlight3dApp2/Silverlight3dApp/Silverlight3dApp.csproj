@@ -87,6 +87,7 @@
     <Compile Include="Player\DumpEnemy.cs" />
     <Compile Include="Player\GhostBase.cs" />
     <Compile Include="Player\Player.cs" />
+    <Compile Include="Utility\Hscore.cs" />
     <Compile Include="Utility\Position2D.cs" />
     <Compile Include="Xaml\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -120,6 +121,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\pac.png" />
+    <Resource Include="Images\pacman_screen.jpg" />
+    <Resource Include="Images\left.jpg" />
+    <Resource Include="Images\up.jpg" />
+    <Resource Include="Images\right.jpg" />
     <Content Include="Levels\0.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />

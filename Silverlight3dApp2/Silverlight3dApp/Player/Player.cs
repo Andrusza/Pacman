@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Base;
+using Silverlight3dApp.Utility;
 
 namespace Silverlight3dApp.Pacman
 {
@@ -11,6 +12,13 @@ namespace Silverlight3dApp.Pacman
     {
         private static Player instance;
         private static int score = 0;
+        private static int livesLeft = 3;
+
+        public static int LivesLeft
+        {
+            get { return Player.livesLeft; }
+            set { Player.livesLeft = value; }
+        }
 
         public static int Score
         {
@@ -34,9 +42,9 @@ namespace Silverlight3dApp.Pacman
             PlayerBorns(content);
             directionTexture = htexture;
             font = content.Load<SpriteFont>("font");
-            Maze.PositionInMaze(this);
+            this.CheckWay();
 
-            direction = new Vector2(0, 0);
+            direction = new Position2D(0, 0);
             UpdateColisionTiles();
         }
 

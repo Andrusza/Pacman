@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Base;
 using Silverlight3dApp.Pacman;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
+using Silverlight3dApp.Utility;
 
 namespace Silverlight3dApp
 {
@@ -28,7 +29,7 @@ namespace Silverlight3dApp
             this.game.maze.Draw(drawEventArgs, this.game.spriteBatch);
             Player.GetInstance.Draw(this.game.spriteBatch);
 
-            foreach (GhostBase x in this.game.difficulty.listOfEnemies)
+            foreach (GhostBase x in Maze.Enemies.listOfEnemies)
             {
                 x.Draw(this.game.spriteBatch);
             }
@@ -56,7 +57,7 @@ namespace Silverlight3dApp
             this.game.maze.Draw(drawEventArgs, this.game.spriteBatch);
             Player.GetInstance.Draw(this.game.spriteBatch);
 
-            foreach (GhostBase x in this.game.difficulty.listOfEnemies)
+            foreach (GhostBase x in Maze.Enemies.listOfEnemies)
             {
                 x.Draw(this.game.spriteBatch);
             }
@@ -101,18 +102,61 @@ namespace Silverlight3dApp
 
     public class WinState : State
     {
+        private SpriteFont font;
+        private Vector2 position;
+
         public override void Update(DrawEventArgs drawEventArgs)
         {
-            int lol = 1;
+            int finalscore = Player.Score;
         }
 
         public WinState(Game game)
         {
             this.game = game;
+            font = this.game.contentManager.Load<SpriteFont>("font");
+            position = game.maze.GetSize();
+            position = position / 2;
+            position *= Tile.Size;
+        }
+
+        public override void Draw(DrawEventArgs drawEventArgs)
+        {
+            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
+            this.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            this.game.spriteBatch.DrawString(font, "YOU HAVE WON!!! YOUR SCORE IS: " + Player.Score.ToString(), position, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            this.game.spriteBatch.End();
         }
     }
 
-    
+    public class DieState : State
+    {
+        private SpriteFont font;
+        private Vector2 position;
+
+        public override void Update(DrawEventArgs drawEventArgs)
+        {
+            int finalscore = Player.Score;
+        }
+
+        public DieState(Game game)
+        {
+            this.game = game;
+            font = this.game.contentManager.Load<SpriteFont>("font");
+            position = game.maze.GetSize();
+            position = position / 2;
+            position *= Tile.Size;
+            Hscore.WriteToIsolatedStorage(Player.Score);
+          
+        }
+
+        public override void Draw(DrawEventArgs drawEventArgs)
+        {
+            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
+            this.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            this.game.spriteBatch.DrawString(font, "YOU HAVE LOST!!! YOUR SCORE IS: " + Player.Score.ToString(), position, Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            this.game.spriteBatch.End();
+        }
+    }
 
     public class PlayState : State
     {
@@ -120,7 +164,7 @@ namespace Silverlight3dApp
         {
             KeyboardState keyboardState = Keyboard.GetState();
             Player.GetInstance.Update(keyboardState);
-            foreach (GhostBase x in game.difficulty.listOfEnemies)
+            foreach (GhostBase x in Maze.Enemies.listOfEnemies)
             {
                 x.Update();
                 if (Player.GetInstance.CheckGhostsCollision(x))
@@ -151,7 +195,7 @@ namespace Silverlight3dApp
             Player.GetInstance.PlayerDies(this.game.contentManager);
             Player.GetInstance.Update();
 
-            this.game.difficulty=this.game.maze.RandomPositionOfEnemies();
+            this.game.difficulty = this.game.maze.RandomPositionOfEnemies();
 
             ThreadPool.QueueUserWorkItem(o =>
             {
@@ -163,13 +207,20 @@ namespace Silverlight3dApp
                     timer.Start();
                 });
             });
-
         }
 
         private void CountDown(object o, EventArgs sender)
         {
-            this.game.state = new StartState(this.game);
+            Player.LivesLeft--;
             timer.Stop();
+            if (Player.LivesLeft == 0)
+            {
+                this.game.state = new DieState(this.game);
+            }
+            else
+            {
+                this.game.state = new StartState(this.game);
+            }
         }
     }
 
@@ -181,12 +232,11 @@ namespace Silverlight3dApp
         public LevelDifficulty difficulty;
         public State state;
 
-        public Game(LevelDifficulty difficulty)
+        public Game(Difficulty difficulty)
         {
             contentManager = new ContentManager(null, "Content");
             spriteBatch = new SpriteBatch(GraphicsDeviceManager.Current.GraphicsDevice);
-            this.difficulty = difficulty;
-
+           
             maze = new Maze(difficulty);
             state = new StartState(this);
         }

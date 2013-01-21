@@ -5,13 +5,17 @@ using System.Windows.Controls;
 using System.Windows.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Pacman;
+using Silverlight3dApp.Utility;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 namespace Silverlight3dApp
 {
     public partial class MainPage
     {
         private Game game;
-        private LevelDifficulty difficulty;
+        private Difficulty difficulty;
+        private Hscore h;
 
         public MainPage()
         {
@@ -36,6 +40,15 @@ namespace Silverlight3dApp
             });
 
             e.InvalidateSurface();
+
+            //if (Player.LivesLeft != 0 && Maze.NumCoins != 0)
+            //{
+            //    e.InvalidateSurface();
+            //}
+            //else
+            //{
+            //    h.WriteToIsolatedStorage(Player.Score);
+            //}
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -51,29 +64,42 @@ namespace Silverlight3dApp
         {
             myDrawingSurface.Draw -= new EventHandler<DrawEventArgs>(myDrawingSurface_Draw);
             Player.Score = 0;
+            Player.LivesLeft = 3;
 
             if (radioButton1.IsChecked == true)
             {
-                difficulty = new LevelDifficulty(Difficulty.Easy);
+                difficulty = Difficulty.Easy;
             }
 
             else if (radioButton1.IsChecked == true)
             {
-                difficulty = new LevelDifficulty(Difficulty.Normal);
+                difficulty = Difficulty.Normal;
             }
 
             else
             {
-                difficulty = new LevelDifficulty(Difficulty.Hard);
+                difficulty = Difficulty.Hard;
             }
 
             Tile.Width = (int)myDrawingSurface.ActualWidth;
             Tile.Height = (int)myDrawingSurface.ActualHeight;
 
             game = new Game(difficulty);
+            Hscore.Highscore=new List<int>();
+            Hscore.ReadFromIsolatedStorage();
+            
+            textBlock1.Text = "";
+            textBlock1.Inlines.Add("**HIGHSCORE**");
+            textBlock1.Inlines.Add(new LineBreak());
+            int num = 0;
+            foreach (int x in Hscore.Highscore)
+            {
+                textBlock1.Inlines.Add(num.ToString()+": "+x.ToString());
+                textBlock1.Inlines.Add(new LineBreak());
+                num++;
+            }
+
             myDrawingSurface.Draw += new EventHandler<DrawEventArgs>(myDrawingSurface_Draw);
         }
-
-       
     }
 }
