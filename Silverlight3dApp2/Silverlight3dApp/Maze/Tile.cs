@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Silverlight3dApp.Utility;
 
 namespace Silverlight3dApp
 {

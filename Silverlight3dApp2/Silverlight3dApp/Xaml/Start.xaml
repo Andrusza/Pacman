@@ -1,0 +1,31 @@
+﻿<navigation:Page x:Class="Silverlight3dApp.Xaml.Start"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           mc:Ignorable="d"
+           xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+           d:DesignWidth="640" d:DesignHeight="480"
+           Title="Start Page">
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="263*" />
+            <ColumnDefinition Width="166*" />
+            <ColumnDefinition Width="211*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44*" />
+            <RowDefinition Height="180*" />
+            <RowDefinition Height="47*" />
+            <RowDefinition Height="209*" />
+        </Grid.RowDefinitions>
+        <Image Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Name="image1" Stretch="Fill" VerticalAlignment="Stretch" Source="/Silverlight3dApp;component/Images/start.png" Height="Auto" Grid.RowSpan="4" Width="Auto" />
+        <StackPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Name="stackPanel1" VerticalAlignment="Stretch" Width="Auto" Grid.RowSpan="2">
+            <RadioButton Content="Easy" DataContext="{Binding}" FontFamily="Verdana" FontSize="20" FontWeight="Bold" Foreground="#FF00814B" GroupName="Difficulty" Height="38" IsChecked="True" Name="radioButton1" Width="94" Grid.Row="1" Grid.Column="1" Padding="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" HorizontalAlignment="Left" />
+            <RadioButton Content="Medium" DataContext="{Binding}" FontFamily="Verdana" FontSize="20" FontWeight="Bold" Foreground="#FF00814B" GroupName="Difficulty" Height="38" IsChecked="False" Name="radioButton2" Width="115" Grid.Row="1" Grid.Column="1" Padding="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" HorizontalAlignment="Left" />
+            <RadioButton Content="Hard" DataContext="{Binding}" FontFamily="Verdana" FontSize="20" FontWeight="Bold" Foreground="#FF00814B" GroupName="Difficulty" Height="38" IsChecked="False" Name="radioButton3" Width="94" Grid.Row="1" Grid.Column="1" Margin="0,0,0,50" Padding="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" HorizontalAlignment="Left" />
+        </StackPanel>
+        <Button Background="Yellow" Content="START" Name="bStart" Grid.Row="2" Padding="10" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Right" Click="bStart_Click" />
+        <Button Background="Yellow" Content="HIGH SCORE" Name="button1" Grid.Row="2" Grid.Column="2" Padding="10" HorizontalAlignment="Left" VerticalAlignment="Center" Click="button1_Click" />
+    </Grid>
+</navigation:Page>

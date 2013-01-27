@@ -99,9 +99,9 @@ namespace Silverlight3dApp
             Tile.Size = new Vector2(Tile.Width, Tile.Height);
 
             // Loop over every tile position,
-            for (int y = 0; y <= numY + 1; ++y)
+            for (int y = 0; y < numY; ++y)
             {
-                for (int x = 0; x <= numX + 1; ++x)
+                for (int x = 0; x < numX; ++x)
                 {
                     try
                     {
@@ -190,9 +190,9 @@ namespace Silverlight3dApp
 
         public void Draw(DrawEventArgs drawEventArgs, SpriteBatch spriteBatch)
         {
-            for (int i = 0; i <= numY + 1; i++)
+            for (int i = 0; i < numY; i++)
             {
-                for (int j = 0; j <= numX + 1; j++)
+                for (int j = 0; j < numX ; j++)
                 {
                     Tile currentTile = Grid[j, i];
 

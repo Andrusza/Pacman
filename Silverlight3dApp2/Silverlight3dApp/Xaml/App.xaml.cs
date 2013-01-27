@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Silverlight3dApp.Xaml;
 
 namespace Silverlight3dApp
 {
@@ -16,7 +17,7 @@ namespace Silverlight3dApp
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            this.RootVisual = new MainPage();
+            this.RootVisual = new Start();
         }
 
         private void Application_Exit(object sender, EventArgs e)

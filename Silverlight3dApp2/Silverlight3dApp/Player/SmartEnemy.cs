@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Threading;
+using System.Windows;
 using System.Windows.Threading;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Silverlight3dApp.Base;
@@ -18,10 +19,16 @@ namespace Silverlight3dApp.Ghosts
         public SmartEnemy(Tile curentTile, ContentManager content)
             : base(curentTile, content)
         {
-            timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 10, 0);
-            timer.Tick += new EventHandler(HuntPlayer);
-            timer.Start();
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    timer = new DispatcherTimer();
+                    timer.Interval = new TimeSpan(0, 0, 0, 10, 0);
+                    timer.Tick += new EventHandler(HuntPlayer);
+                    timer.Start();
+                });
+            });
 
             htexture = content.Load<Texture2D>("pac3");
             vtexture = content.Load<Texture2D>("pac4");
@@ -60,14 +67,20 @@ namespace Silverlight3dApp.Ghosts
                 this.direction = pathfinding.path.Dequeue();
                 UpdateColisionTiles();
             }
-            
         }
 
         public void HuntPlayer(object o, EventArgs sender)
         {
             pathfinding = new Astar(Player.GetInstance.CurrentTile, this.CurrentTile);
-            direction = pathfinding.path.Peek();
-            this.CheckWay();
+            try
+            {
+                direction = pathfinding.path.Peek();
+                this.CheckWay();
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public override void Update()

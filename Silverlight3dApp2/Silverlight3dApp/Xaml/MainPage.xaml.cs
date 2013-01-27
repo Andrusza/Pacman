@@ -3,11 +3,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Pacman;
 using Silverlight3dApp.Utility;
-using System.Windows.Documents;
-using System.Collections.Generic;
+using Silverlight3dApp.Xaml;
 
 namespace Silverlight3dApp
 {
@@ -17,13 +15,22 @@ namespace Silverlight3dApp
         private Difficulty difficulty;
         private Hscore h;
 
-        public MainPage()
+        public MainPage(Difficulty difficulty)
         {
             App.Current.MainWindow.WindowState = WindowState.Maximized;
+            this.difficulty = difficulty;
             InitializeComponent();
+            LayoutRoot.SizeChanged += LayoutRoot_SizeChanged;
+        }
 
-            Mouse.RootControl = this;
-            Keyboard.RootControl = this;
+        private void LayoutRoot_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            InitGame();
+        }
+
+        public void End()
+        {
+            this.Content = new GameOver();
         }
 
         private void myDrawingSurface_Draw(object sender, DrawEventArgs e)
@@ -39,16 +46,22 @@ namespace Silverlight3dApp
                 }));
             });
 
-            e.InvalidateSurface();
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    label1.Content = Player.LivesLeft;
+                }));
+            });
 
-            //if (Player.LivesLeft != 0 && Maze.NumCoins != 0)
-            //{
-            //    e.InvalidateSurface();
-            //}
-            //else
-            //{
-            //    h.WriteToIsolatedStorage(Player.Score);
-            //}
+            if (Player.LivesLeft == 0)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.Content = new GameOver();
+                }));
+            }
+            e.InvalidateSurface();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -60,44 +73,16 @@ namespace Silverlight3dApp
             }
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void InitGame()
         {
             myDrawingSurface.Draw -= new EventHandler<DrawEventArgs>(myDrawingSurface_Draw);
             Player.Score = 0;
             Player.LivesLeft = 3;
 
-            if (radioButton1.IsChecked == true)
-            {
-                difficulty = Difficulty.Easy;
-            }
-
-            else if (radioButton1.IsChecked == true)
-            {
-                difficulty = Difficulty.Normal;
-            }
-
-            else
-            {
-                difficulty = Difficulty.Hard;
-            }
-
             Tile.Width = (int)myDrawingSurface.ActualWidth;
             Tile.Height = (int)myDrawingSurface.ActualHeight;
 
             game = new Game(difficulty);
-            Hscore.Highscore=new List<int>();
-            Hscore.ReadFromIsolatedStorage();
-            
-            textBlock1.Text = "";
-            textBlock1.Inlines.Add("**HIGHSCORE**");
-            textBlock1.Inlines.Add(new LineBreak());
-            int num = 0;
-            foreach (int x in Hscore.Highscore)
-            {
-                textBlock1.Inlines.Add(num.ToString()+": "+x.ToString());
-                textBlock1.Inlines.Add(new LineBreak());
-                num++;
-            }
 
             myDrawingSurface.Draw += new EventHandler<DrawEventArgs>(myDrawingSurface_Draw);
         }

@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Silverlight3dApp.Base;
 using Silverlight3dApp.Pacman;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
-using Silverlight3dApp.Utility;
+using Silverlight3dApp.Xaml;
 
 namespace Silverlight3dApp
 {
@@ -133,28 +133,19 @@ namespace Silverlight3dApp
         private SpriteFont font;
         private Vector2 position;
 
-        public override void Update(DrawEventArgs drawEventArgs)
-        {
-            int finalscore = Player.Score;
-        }
-
         public DieState(Game game)
         {
-            this.game = game;
-            font = this.game.contentManager.Load<SpriteFont>("font");
-            position = game.maze.GetSize();
-            position = position / 2;
-            position *= Tile.Size;
-            Hscore.WriteToIsolatedStorage(Player.Score);
           
         }
 
         public override void Draw(DrawEventArgs drawEventArgs)
         {
-            GraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.White);
-            this.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            this.game.spriteBatch.DrawString(font, "YOU HAVE LOST!!! YOUR SCORE IS: " + Player.Score.ToString(), position, Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            this.game.spriteBatch.End();
+            throw new NotImplementedException();
+        }
+
+        public override void Update(DrawEventArgs drawEventArgs)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -215,7 +206,7 @@ namespace Silverlight3dApp
             timer.Stop();
             if (Player.LivesLeft == 0)
             {
-                this.game.state = new DieState(this.game);
+                //this.game.state = new DieState(this.game);
             }
             else
             {
@@ -236,7 +227,7 @@ namespace Silverlight3dApp
         {
             contentManager = new ContentManager(null, "Content");
             spriteBatch = new SpriteBatch(GraphicsDeviceManager.Current.GraphicsDevice);
-           
+
             maze = new Maze(difficulty);
             state = new StartState(this);
         }
